@@ -1,4 +1,5 @@
 import { createTerrain } from './terrain.js';
+import { createScenery } from './scenery.js';
 
 const vertexSource = `
   attribute vec3 aPosition;
@@ -89,9 +90,12 @@ function start() {
 
   const program = createProgram(gl);
   const terrain = createTerrain(2.4);
+  const scenery = createScenery();
+  const positions = new Float32Array([...terrain.positions, ...scenery.positions]);
+  const colors = new Float32Array([...terrain.colors, ...scenery.colors]);
   gl.useProgram(program);
-  bindAttribute(gl, program, 'aPosition', terrain.positions);
-  bindAttribute(gl, program, 'aColor', terrain.colors);
+  bindAttribute(gl, program, 'aPosition', positions);
+  bindAttribute(gl, program, 'aColor', colors);
   gl.enable(gl.DEPTH_TEST);
   gl.clearColor(0, 0, 0, 0);
 
@@ -109,7 +113,7 @@ function start() {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     gl.uniformMatrix4fv(projection, false, perspective(Math.PI / 4, aspect, 0.1, distance + 30));
     gl.uniformMatrix4fv(view, false, viewFromOrbit(Math.PI / 6, Math.PI / 4, distance, -0.55));
-    gl.drawArrays(gl.TRIANGLES, 0, terrain.positions.length / 3);
+    gl.drawArrays(gl.TRIANGLES, 0, positions.length / 3);
   }
 
   window.addEventListener('resize', draw);
