@@ -1,0 +1,48 @@
+:root {
+  color-scheme: dark;
+  font-family: system-ui, sans-serif;
+  color: #fff0d4;
+  background: #10142a;
+}
+
+body {
+  margin: 0;
+}
+
+main {
+  position: relative;
+  height: 100vh;
+  height: 100dvh;
+  background: radial-gradient(ellipse at 50% 60%, #2d355b, #10142a 70%);
+}
+
+canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+header {
+  position: absolute;
+  inset: clamp(1rem, 4vw, 3rem) auto auto clamp(1rem, 4vw, 3rem);
+  pointer-events: none;
+}
+
+header p {
+  margin: 0 0 0.45rem;
+  color: #dfc6a1;
+  font-size: 0.75rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+h1 {
+  margin: 0;
+  font: 400 clamp(2rem, 6vw, 4rem) Georgia, serif;
+}
+
+#status {
+  position: absolute;
+  inset: 45% 1rem auto;
+  text-align: center;
+}
