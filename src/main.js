@@ -2,6 +2,7 @@ import { createTerrain } from './terrain.js';
 import { createScenery } from './scenery.js';
 import { createPinwheel, pinwheelTransforms } from './pinwheel.js';
 import { createPrince } from './prince.js';
+import { createFox } from './fox.js';
 
 const vertexSource = `
   attribute vec3 aPosition;
@@ -94,9 +95,10 @@ function start() {
   const program = createProgram(gl);
   const terrain = createTerrain(2.4);
   const scenery = createScenery();
+  const fox = createFox();
   const pinwheel = createPinwheel();
   const princePoses = [0, 1, 2].map(createPrince);
-  const princeStart = (terrain.positions.length + scenery.positions.length + pinwheel.positions.length) / 3;
+  const princeStart = (terrain.positions.length + scenery.positions.length + fox.positions.length + pinwheel.positions.length) / 3;
   const poseStarts = [];
   let nextVertex = princeStart;
   for (const pose of princePoses) {
@@ -109,9 +111,9 @@ function start() {
       currentPose = (currentPose + 1) % princePoses.length;
     }
   });
-  const sceneryCount = (terrain.positions.length + scenery.positions.length) / 3;
-  const positions = new Float32Array([...terrain.positions, ...scenery.positions, ...pinwheel.positions, ...princePoses.flatMap(pose => pose.positions)]);
-  const colors = new Float32Array([...terrain.colors, ...scenery.colors, ...pinwheel.colors, ...princePoses.flatMap(pose => pose.colors)]);
+  const sceneryCount = (terrain.positions.length + scenery.positions.length + fox.positions.length) / 3;
+  const positions = new Float32Array([...terrain.positions, ...scenery.positions, ...fox.positions, ...pinwheel.positions, ...princePoses.flatMap(pose => pose.positions)]);
+  const colors = new Float32Array([...terrain.colors, ...scenery.colors, ...fox.colors, ...pinwheel.colors, ...princePoses.flatMap(pose => pose.colors)]);
   gl.useProgram(program);
   bindAttribute(gl, program, 'aPosition', positions);
   bindAttribute(gl, program, 'aColor', colors);
