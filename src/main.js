@@ -1,6 +1,7 @@
 import { createTerrain } from './terrain.js';
 import { createScenery } from './scenery.js';
 import { createPinwheel, pinwheelTransforms } from './pinwheel.js';
+import { createPrince } from './prince.js';
 
 const vertexSource = `
   attribute vec3 aPosition;
@@ -94,9 +95,23 @@ function start() {
   const terrain = createTerrain(2.4);
   const scenery = createScenery();
   const pinwheel = createPinwheel();
+  const princePoses = [0, 1, 2].map(createPrince);
+  const princeStart = (terrain.positions.length + scenery.positions.length + pinwheel.positions.length) / 3;
+  const poseStarts = [];
+  let nextVertex = princeStart;
+  for (const pose of princePoses) {
+    poseStarts.push(nextVertex);
+    nextVertex += pose.positions.length / 3;
+  }
+  let currentPose = 0;
+  window.addEventListener('keydown', event => {
+    if (event.key.toLowerCase() === 'p' && !event.repeat) {
+      currentPose = (currentPose + 1) % princePoses.length;
+    }
+  });
   const sceneryCount = (terrain.positions.length + scenery.positions.length) / 3;
-  const positions = new Float32Array([...terrain.positions, ...scenery.positions, ...pinwheel.positions]);
-  const colors = new Float32Array([...terrain.colors, ...scenery.colors, ...pinwheel.colors]);
+  const positions = new Float32Array([...terrain.positions, ...scenery.positions, ...pinwheel.positions, ...princePoses.flatMap(pose => pose.positions)]);
+  const colors = new Float32Array([...terrain.colors, ...scenery.colors, ...pinwheel.colors, ...princePoses.flatMap(pose => pose.colors)]);
   gl.useProgram(program);
   bindAttribute(gl, program, 'aPosition', positions);
   bindAttribute(gl, program, 'aColor', colors);
@@ -125,6 +140,7 @@ function start() {
     gl.uniformMatrix4fv(view, false, viewFromOrbit(Math.PI / 6, Math.PI / 4, distance, -0.55));
     gl.uniformMatrix4fv(model, false, identity);
     gl.drawArrays(gl.TRIANGLES, 0, sceneryCount);
+    gl.drawArrays(gl.TRIANGLES, poseStarts[currentPose], princePoses[currentPose].positions.length / 3);
     const transforms = pinwheelTransforms(time / 1000);
     gl.uniformMatrix4fv(model, false, transforms.pole);
     gl.drawArrays(gl.TRIANGLES, sceneryCount, pinwheel.poleCount);
