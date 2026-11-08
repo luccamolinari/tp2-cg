@@ -1,15 +1,17 @@
 import { createTerrain } from './terrain.js';
 import { createScenery } from './scenery.js';
+import { createPinwheel, pinwheelTransforms } from './pinwheel.js';
 
 const vertexSource = `
   attribute vec3 aPosition;
   attribute vec3 aColor;
   uniform mat4 uView;
   uniform mat4 uProjection;
+  uniform mat4 uModel;
   varying vec3 vColor;
 
   void main() {
-    gl_Position = uProjection * uView * vec4(aPosition, 1.0);
+    gl_Position = uProjection * uView * uModel * vec4(aPosition, 1.0);
     vColor = aColor;
   }
 `;
@@ -91,8 +93,10 @@ function start() {
   const program = createProgram(gl);
   const terrain = createTerrain(2.4);
   const scenery = createScenery();
-  const positions = new Float32Array([...terrain.positions, ...scenery.positions]);
-  const colors = new Float32Array([...terrain.colors, ...scenery.colors]);
+  const pinwheel = createPinwheel();
+  const sceneryCount = (terrain.positions.length + scenery.positions.length) / 3;
+  const positions = new Float32Array([...terrain.positions, ...scenery.positions, ...pinwheel.positions]);
+  const colors = new Float32Array([...terrain.colors, ...scenery.colors, ...pinwheel.colors]);
   gl.useProgram(program);
   bindAttribute(gl, program, 'aPosition', positions);
   bindAttribute(gl, program, 'aColor', colors);
@@ -101,11 +105,17 @@ function start() {
 
   const view = gl.getUniformLocation(program, 'uView');
   const projection = gl.getUniformLocation(program, 'uProjection');
+  const model = gl.getUniformLocation(program, 'uModel');
+  const identity = new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
 
-  function draw() {
+  function draw(time) {
     const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
-    canvas.width = Math.max(1, Math.round(canvas.clientWidth * pixelRatio));
-    canvas.height = Math.max(1, Math.round(canvas.clientHeight * pixelRatio));
+    const width = Math.max(1, Math.round(canvas.clientWidth * pixelRatio));
+    const height = Math.max(1, Math.round(canvas.clientHeight * pixelRatio));
+    if (canvas.width !== width || canvas.height !== height) {
+      canvas.width = width;
+      canvas.height = height;
+    }
     const aspect = canvas.width / canvas.height;
     const distance = 8.5 / Math.min(aspect, 1);
 
@@ -113,11 +123,17 @@ function start() {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     gl.uniformMatrix4fv(projection, false, perspective(Math.PI / 4, aspect, 0.1, distance + 30));
     gl.uniformMatrix4fv(view, false, viewFromOrbit(Math.PI / 6, Math.PI / 4, distance, -0.55));
-    gl.drawArrays(gl.TRIANGLES, 0, positions.length / 3);
+    gl.uniformMatrix4fv(model, false, identity);
+    gl.drawArrays(gl.TRIANGLES, 0, sceneryCount);
+    const transforms = pinwheelTransforms(time / 1000);
+    gl.uniformMatrix4fv(model, false, transforms.pole);
+    gl.drawArrays(gl.TRIANGLES, sceneryCount, pinwheel.poleCount);
+    gl.uniformMatrix4fv(model, false, transforms.blades);
+    gl.drawArrays(gl.TRIANGLES, sceneryCount + pinwheel.poleCount, pinwheel.bladeCount);
+    requestAnimationFrame(draw);
   }
 
-  window.addEventListener('resize', draw);
-  draw();
+  requestAnimationFrame(draw);
 }
 
 try {
