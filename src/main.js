@@ -3,6 +3,7 @@ import { createScenery } from './scenery.js';
 import { createPinwheel, pinwheelTransforms } from './pinwheel.js';
 import { createPrince } from './prince.js';
 import { createFox } from './fox.js';
+import { createCamera } from './camera.js';
 
 const vertexSource = `
   attribute vec3 aPosition;
@@ -93,6 +94,7 @@ function start() {
   }
 
   const program = createProgram(gl);
+  const camera = createCamera(canvas, document.querySelector('#camera-mode'));
   const terrain = createTerrain(2.4);
   const scenery = createScenery();
   const fox = createFox();
@@ -125,7 +127,11 @@ function start() {
   const model = gl.getUniformLocation(program, 'uModel');
   const identity = new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
 
+  let previousTime = null;
   function draw(time) {
+    const elapsed = previousTime === null ? 0 : Math.min((time - previousTime) / 1000, 0.1);
+    previousTime = time;
+    if (camera.mode === 1) camera.azimuth += elapsed * 0.18;
     const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
     const width = Math.max(1, Math.round(canvas.clientWidth * pixelRatio));
     const height = Math.max(1, Math.round(canvas.clientHeight * pixelRatio));
@@ -134,12 +140,12 @@ function start() {
       canvas.height = height;
     }
     const aspect = canvas.width / canvas.height;
-    const distance = 8.5 / Math.min(aspect, 1);
+    const distance = camera.distance / Math.min(aspect, 1);
 
     gl.viewport(0, 0, canvas.width, canvas.height);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     gl.uniformMatrix4fv(projection, false, perspective(Math.PI / 4, aspect, 0.1, distance + 30));
-    gl.uniformMatrix4fv(view, false, viewFromOrbit(Math.PI / 6, Math.PI / 4, distance, -0.55));
+    gl.uniformMatrix4fv(view, false, viewFromOrbit(camera.azimuth, camera.elevation, distance, 0));
     gl.uniformMatrix4fv(model, false, identity);
     gl.drawArrays(gl.TRIANGLES, 0, sceneryCount);
     gl.drawArrays(gl.TRIANGLES, poseStarts[currentPose], princePoses[currentPose].positions.length / 3);
