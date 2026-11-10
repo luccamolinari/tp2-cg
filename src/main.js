@@ -4,29 +4,64 @@ import { createPinwheel, pinwheelTransforms } from './pinwheel.js';
 import { createPrince } from './prince.js';
 import { createFox } from './fox.js';
 import { createCamera } from './camera.js';
+import { faceNormals } from './normals.js';
 
 const vertexSource = `
   attribute vec3 aPosition;
   attribute vec3 aColor;
+  attribute vec3 aNormal;
   uniform mat4 uView;
   uniform mat4 uProjection;
   uniform mat4 uModel;
   varying vec3 vColor;
+  varying vec3 vNormal;
+  varying vec3 vPosition;
 
   void main() {
-    gl_Position = uProjection * uView * uModel * vec4(aPosition, 1.0);
+    vec4 world = uModel * vec4(aPosition, 1.0);
+    gl_Position = uProjection * uView * world;
     vColor = aColor;
+    // Os modelos usam apenas translação e rotação.
+    vNormal = (uModel * vec4(aNormal, 0.0)).xyz;
+    vPosition = world.xyz;
   }
 `;
 
 const fragmentSource = `
   precision mediump float;
   varying vec3 vColor;
+  varying vec3 vNormal;
+  varying vec3 vPosition;
+  uniform bool uLighting;
+  uniform vec3 uLightDirection;
+  uniform vec3 uEye;
+  uniform float uSpecular;
+  uniform float uShininess;
 
   void main() {
-    gl_FragColor = vec4(vColor, 1.0);
+    vec3 color = vColor;
+    if (uLighting) {
+      vec3 normal = normalize(gl_FrontFacing ? vNormal : -vNormal);
+      vec3 light = normalize(uLightDirection);
+      float diffuse = max(dot(normal, light), 0.0);
+      float specular = 0.0;
+      if (diffuse > 0.0) {
+        vec3 reflection = reflect(-light, normal);
+        vec3 view = normalize(uEye - vPosition);
+        specular = uSpecular * pow(max(dot(reflection, view), 0.0), uShininess);
+      }
+      color = vColor * (0.54 + 0.5 * diffuse) + vec3(specular);
+    }
+    gl_FragColor = vec4(color, 1.0);
   }
 `;
+
+const materials = {
+  stone: { specular: 0.05, shininess: 12 },
+  cloth: { specular: 0.02, shininess: 8 },
+  wood: { specular: 0.08, shininess: 16 },
+  paper: { specular: 0.18, shininess: 22 },
+};
 
 function compileShader(gl, type, source) {
   const shader = gl.createShader(type);
@@ -108,9 +143,17 @@ function start() {
     nextVertex += pose.positions.length / 3;
   }
   let currentPose = 0;
+  let lighting = true;
+  const lightStatus = document.querySelector('#light-mode');
   window.addEventListener('keydown', event => {
-    if (event.key.toLowerCase() === 'p' && !event.repeat) {
+    if (event.repeat || event.ctrlKey || event.altKey || event.metaKey) return;
+    const key = event.key.toLowerCase();
+    if (key === 'p') {
       currentPose = (currentPose + 1) % princePoses.length;
+    }
+    if (key === 'l') {
+      lighting = !lighting;
+      lightStatus.textContent = lighting ? 'L · Luz ligada' : 'L · Luz desligada';
     }
   });
   const sceneryCount = (terrain.positions.length + scenery.positions.length + fox.positions.length) / 3;
@@ -119,13 +162,26 @@ function start() {
   gl.useProgram(program);
   bindAttribute(gl, program, 'aPosition', positions);
   bindAttribute(gl, program, 'aColor', colors);
+  bindAttribute(gl, program, 'aNormal', faceNormals(positions));
   gl.enable(gl.DEPTH_TEST);
   gl.clearColor(0, 0, 0, 0);
 
   const view = gl.getUniformLocation(program, 'uView');
   const projection = gl.getUniformLocation(program, 'uProjection');
   const model = gl.getUniformLocation(program, 'uModel');
+  const lightingEnabled = gl.getUniformLocation(program, 'uLighting');
+  const lightDirection = gl.getUniformLocation(program, 'uLightDirection');
+  const eye = gl.getUniformLocation(program, 'uEye');
+  const specular = gl.getUniformLocation(program, 'uSpecular');
+  const shininess = gl.getUniformLocation(program, 'uShininess');
   const identity = new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
+
+  function drawMesh(start, count, transform, material) {
+    gl.uniformMatrix4fv(model, false, transform);
+    gl.uniform1f(specular, material.specular);
+    gl.uniform1f(shininess, material.shininess);
+    gl.drawArrays(gl.TRIANGLES, start, count);
+  }
 
   let previousTime = null;
   function draw(time) {
@@ -145,15 +201,17 @@ function start() {
     gl.viewport(0, 0, canvas.width, canvas.height);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     gl.uniformMatrix4fv(projection, false, perspective(Math.PI / 4, aspect, 0.1, distance + 30));
-    gl.uniformMatrix4fv(view, false, viewFromOrbit(camera.azimuth, camera.elevation, distance, 0));
-    gl.uniformMatrix4fv(model, false, identity);
-    gl.drawArrays(gl.TRIANGLES, 0, sceneryCount);
-    gl.drawArrays(gl.TRIANGLES, poseStarts[currentPose], princePoses[currentPose].positions.length / 3);
+    const viewMatrix = viewFromOrbit(camera.azimuth, camera.elevation, distance, 0);
+    gl.uniformMatrix4fv(view, false, viewMatrix);
+    gl.uniform3f(eye, viewMatrix[2] * distance, viewMatrix[6] * distance, viewMatrix[10] * distance);
+    gl.uniform1i(lightingEnabled, lighting);
+    const sunAngle = time * 0.00015 + 0.8;
+    gl.uniform3f(lightDirection, Math.sin(sunAngle), 1.3, Math.cos(sunAngle));
+    drawMesh(0, sceneryCount, identity, materials.stone);
+    drawMesh(poseStarts[currentPose], princePoses[currentPose].positions.length / 3, identity, materials.cloth);
     const transforms = pinwheelTransforms(time / 1000);
-    gl.uniformMatrix4fv(model, false, transforms.pole);
-    gl.drawArrays(gl.TRIANGLES, sceneryCount, pinwheel.poleCount);
-    gl.uniformMatrix4fv(model, false, transforms.blades);
-    gl.drawArrays(gl.TRIANGLES, sceneryCount + pinwheel.poleCount, pinwheel.bladeCount);
+    drawMesh(sceneryCount, pinwheel.poleCount, transforms.pole, materials.wood);
+    drawMesh(sceneryCount + pinwheel.poleCount, pinwheel.bladeCount, transforms.blades, materials.paper);
     requestAnimationFrame(draw);
   }
 
