@@ -7,12 +7,14 @@ export function createPrince(pose) {
   const boots = [0.35, 0.23, 0.19];
   const sitting = pose === 1;
   const hip = sitting ? 0.23 : 0.43;
+  const offsetX = sitting ? -0.35 : -0.25;
+  const offsetZ = sitting ? -0.6 : 0.45;
 
   function point(x, y, z) {
     if (pose === 2) return [x - 0.45, z + 0.22, -y + 0.65];
     const angle = sitting ? -0.6 : 0.55;
-    return [x * Math.cos(angle) + z * Math.sin(angle) - 0.25,
-      y, -x * Math.sin(angle) + z * Math.cos(angle) + 0.45];
+    return [x * Math.cos(angle) + z * Math.sin(angle) + offsetX,
+      y, -x * Math.sin(angle) + z * Math.cos(angle) + offsetZ];
   }
 
   function box(x, y, z, width, height, depth, color) {
