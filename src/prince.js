@@ -1,3 +1,5 @@
+export const princeSeat = { x: -0.35, z: -0.6, height: 0.22 };
+
 export function createPrince(pose) {
   const positions = [];
   const colors = [];
@@ -6,9 +8,9 @@ export function createPrince(pose) {
   const skin = [0.95, 0.77, 0.59];
   const boots = [0.35, 0.23, 0.19];
   const sitting = pose === 1;
-  const hip = sitting ? 0.23 : 0.43;
-  const offsetX = sitting ? -0.35 : -0.25;
-  const offsetZ = sitting ? -0.6 : 0.45;
+  const hip = sitting ? princeSeat.height + 0.01 : 0.43;
+  const offsetX = sitting ? princeSeat.x : -0.25;
+  const offsetZ = sitting ? princeSeat.z : 0.45;
 
   function point(x, y, z) {
     if (pose === 2) return [x - 0.45, z + 0.22, -y + 0.65];
@@ -35,7 +37,7 @@ export function createPrince(pose) {
   for (const side of [-1, 1]) {
     const x = side * 0.085;
     if (sitting) {
-      box(x, 0.24, 0.12, 0.12, 0.12, 0.32, green);
+      box(x, princeSeat.height + 0.05, 0.12, 0.12, 0.1, 0.32, green);
       box(x, 0.13, 0.25, 0.1, 0.2, 0.1, green);
       box(x, 0.045, 0.3, 0.12, 0.09, 0.2, boots);
     } else {

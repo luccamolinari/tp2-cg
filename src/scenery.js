@@ -1,3 +1,5 @@
+import { princeSeat } from './prince.js';
+
 export function createScenery() {
   const positions = [];
   const colors = [];
@@ -37,6 +39,8 @@ export function createScenery() {
   volcano(-1.15, -0.7, 1, true);
   volcano(-0.15, -1.45, 0.75, true);
   volcano(-1.55, 0.35, 0.65, false);
+  const { x, z, height } = princeSeat;
+  lathe(x, z, [[0, 0], [0.24, 0], [0.22, 0.13], [0.18, height], [0, height]], [0.64, 0.58, 0.67], 7);
 
   // Rosa à frente, deixando o centro livre para o príncipe.
   const roseX = 0.85;
