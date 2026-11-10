@@ -3,8 +3,8 @@ export function createTerrain(radius) {
   const colors = [];
   const segments = 24;
   const bands = 5;
-  const grass = [[0.47, 0.60, 0.40], [0.49, 0.62, 0.42], [0.46, 0.59, 0.39]];
-  const rock = [[0.46, 0.38, 0.45], [0.49, 0.41, 0.48], [0.42, 0.35, 0.43]];
+  const ground = [[0.77, 0.71, 0.83], [0.79, 0.73, 0.84], [0.74, 0.68, 0.80]];
+  const rock = [[0.69, 0.62, 0.76], [0.73, 0.66, 0.79], [0.66, 0.59, 0.73]];
 
   function triangle(a, b, c, color, brightness = 1) {
     positions.push(...a, ...b, ...c);
@@ -20,7 +20,7 @@ export function createTerrain(radius) {
   }
 
   for (let segment = 0; segment < segments; segment++) {
-    triangle([0, 0, 0], ringPoint(0, segment + 1), ringPoint(0, segment), grass[segment % grass.length]);
+    triangle([0, 0, 0], ringPoint(0, segment + 1), ringPoint(0, segment), ground[segment % ground.length]);
   }
 
   for (let band = 0; band < bands; band++) {

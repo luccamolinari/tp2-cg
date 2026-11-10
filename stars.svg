@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="690" height="540" viewBox="0 0 690 540">
+  <defs>
+    <path id="star" d="m0-12 3.8 7.9 8.5.6-6.7 5.4 2 8.5L0 5.8l-7.4 4.4 1.8-8.5-6.6-5.4 8.7-.4z"/>
+    <filter id="grain">
+      <feTurbulence type="fractalNoise" baseFrequency=".83" numOctaves="3" seed="12"/>
+    </filter>
+  </defs>
+  <path d="M0 0h690v540H0z" filter="url(#grain)" opacity=".11"/>
+  <g fill="#f6d450" stroke="#82612b" stroke-width="1" stroke-linejoin="round">
+    <use href="#star" transform="translate(91 106) rotate(-16) scale(.9)"/>
+    <use href="#star" transform="translate(410 60) rotate(11) scale(.65)"/>
+    <use href="#star" transform="translate(527 287) rotate(19) scale(1.1)"/>
+    <use href="#star" transform="translate(224 427) rotate(-20) scale(.75)"/>
+    <use href="#star" transform="translate(627 482) rotate(8) scale(.55)"/>
+    <path d="M142 258c9-2 18 5 18 14 1 10-7 17-16 17-10 0-16-7-17-15-1-8 7-15 15-16z"/>
+    <circle cx="606" cy="124" r="10"/>
+    <ellipse cx="606" cy="124" rx="16" ry="4" transform="rotate(-44 606 124)" fill="none"/>
+  </g>
+  <g fill="#b69559" opacity=".48">
+    <circle cx="63" cy="369" r="1.5"/>
+    <circle cx="311" cy="160" r="2"/>
+    <circle cx="455" cy="395" r="1.4"/>
+    <circle cx="655" cy="203" r="1.5"/>
+  </g>
+</svg>

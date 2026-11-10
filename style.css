@@ -1,8 +1,8 @@
 :root {
-  color-scheme: dark;
+  color-scheme: light;
   font-family: system-ui, sans-serif;
-  color: #fff0d4;
-  background: #10142a;
+  color: #383247;
+  background: #f6f3e9;
 }
 
 body {
@@ -13,7 +13,7 @@ main {
   position: relative;
   height: 100vh;
   height: 100dvh;
-  background: radial-gradient(ellipse at 50% 60%, #2d355b, #10142a 70%);
+  background: url("stars.svg") center, radial-gradient(ellipse at 50% 38%, #faf8f0, #eae6dc);
 }
 
 canvas {
@@ -32,7 +32,7 @@ canvas {
   gap: 0.3rem;
   text-align: center;
   font-size: 0.8rem;
-  color: #dfc6a1;
+  color: #54495d;
   pointer-events: none;
 }
 
@@ -44,7 +44,7 @@ header {
 
 header p {
   margin: 0 0 0.45rem;
-  color: #dfc6a1;
+  color: #54495d;
   font-size: 0.75rem;
   letter-spacing: 0.18em;
   text-transform: uppercase;
