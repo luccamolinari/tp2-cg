@@ -12,6 +12,8 @@ body {
 main {
   position: relative;
   isolation: isolate;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
   height: 100vh;
   height: 100dvh;
   background: url("paper.svg"), radial-gradient(ellipse at 50% 38%, #faf8f0, #eae6dc);
@@ -19,21 +21,21 @@ main {
 
 main::before {
   content: "";
-  position: absolute;
-  inset: 0;
+  grid-area: 2 / 1;
   z-index: -1;
   pointer-events: none;
   background: url("stars.svg") center;
-  --header-clearance: clamp(8.5rem, 16vw, 11rem);
   mask-image: linear-gradient(
-    transparent var(--header-clearance),
-    black calc(var(--header-clearance) + 1.5rem),
-    black calc(100% - 6rem),
-    transparent calc(100% - 4.5rem)
+    transparent,
+    black min(1.5rem, 20%),
+    black max(calc(100% - 1.5rem), 80%),
+    transparent
   );
 }
 
 canvas {
+  position: absolute;
+  inset: 0;
   touch-action: none;
   display: block;
   width: 100%;
@@ -41,10 +43,9 @@ canvas {
 }
 
 .controls {
-  position: absolute;
-  bottom: 1rem;
-  left: 1rem;
-  right: 1rem;
+  grid-area: 3 / 1;
+  position: relative;
+  margin: 0.5rem 1rem 1rem;
   display: grid;
   gap: 0.3rem;
   text-align: center;
@@ -54,8 +55,9 @@ canvas {
 }
 
 header {
-  position: absolute;
-  inset: clamp(1rem, 4vw, 3rem) auto auto clamp(1rem, 4vw, 3rem);
+  grid-area: 1 / 1;
+  position: relative;
+  margin: clamp(1rem, 4vw, 3rem) clamp(1rem, 4vw, 3rem) 0.5rem;
   pointer-events: none;
 }
 
