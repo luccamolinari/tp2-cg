@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="690" height="540">
+  <filter id="grain">
+    <feTurbulence type="fractalNoise" baseFrequency=".83" numOctaves="3" seed="12"/>
+  </filter>
+  <path d="M0 0h690v540H0z" filter="url(#grain)" opacity=".11"/>
+</svg>

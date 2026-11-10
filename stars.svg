@@ -1,11 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="690" height="540" viewBox="0 0 690 540">
   <defs>
     <path id="star" d="m0-12 3.8 7.9 8.5.6-6.7 5.4 2 8.5L0 5.8l-7.4 4.4 1.8-8.5-6.6-5.4 8.7-.4z"/>
-    <filter id="grain">
-      <feTurbulence type="fractalNoise" baseFrequency=".83" numOctaves="3" seed="12"/>
-    </filter>
   </defs>
-  <path d="M0 0h690v540H0z" filter="url(#grain)" opacity=".11"/>
   <g fill="#f6d450" stroke="#82612b" stroke-width="1" stroke-linejoin="round">
     <use href="#star" transform="translate(91 106) rotate(-16) scale(.9)"/>
     <use href="#star" transform="translate(410 60) rotate(11) scale(.65)"/>
