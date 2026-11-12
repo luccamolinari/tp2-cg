@@ -5,6 +5,7 @@ import { createPrince } from './prince.js';
 import { createFox } from './fox.js';
 import { createCamera } from './camera.js';
 import { faceNormals } from './normals.js';
+import { createSkySphere, loadSkyTexture } from './sky.js';
 
 const vertexSource = `
   attribute vec3 aPosition;
@@ -37,8 +38,20 @@ const fragmentSource = `
   uniform vec3 uEye;
   uniform float uSpecular;
   uniform float uShininess;
+  uniform bool uSky;
+  uniform sampler2D uStars;
+  uniform vec2 uSkyBand;
 
   void main() {
+    if (uSky) {
+      vec3 direction = normalize(vPosition);
+      float longitude = atan(direction.z, direction.x) / 6.2831853 + 0.5;
+      float latitude = 0.5 - asin(clamp(direction.y, -1.0, 1.0)) / 3.1415927;
+      vec4 stars = texture2D(uStars, fract(vec2(longitude * 9.0, latitude * 5.0)));
+      float edge = min(gl_FragCoord.y - uSkyBand.x, uSkyBand.y - gl_FragCoord.y);
+      gl_FragColor = vec4(stars.rgb, stars.a * smoothstep(0.0, 22.0, edge));
+      return;
+    }
     vec3 color = vColor;
     if (uLighting) {
       vec3 normal = normalize(gl_FrontFacing ? vNormal : -vNormal);
@@ -157,8 +170,13 @@ function start() {
     }
   });
   const sceneryCount = (terrain.positions.length + scenery.positions.length + fox.positions.length) / 3;
-  const positions = new Float32Array([...terrain.positions, ...scenery.positions, ...fox.positions, ...pinwheel.positions, ...princePoses.flatMap(pose => pose.positions)]);
-  const colors = new Float32Array([...terrain.colors, ...scenery.colors, ...fox.colors, ...pinwheel.colors, ...princePoses.flatMap(pose => pose.colors)]);
+  const skyPositions = createSkySphere();
+  const positions = new Float32Array([...terrain.positions, ...scenery.positions, ...fox.positions, ...pinwheel.positions, ...princePoses.flatMap(pose => pose.positions), ...skyPositions]);
+  const colors = new Float32Array(positions.length);
+  colors.set([...terrain.colors, ...scenery.colors, ...fox.colors, ...pinwheel.colors, ...princePoses.flatMap(pose => pose.colors)]);
+  const sky = loadSkyTexture(gl);
+  const header = document.querySelector('header');
+  const controls = document.querySelector('.controls');
   gl.useProgram(program);
   bindAttribute(gl, program, 'aPosition', positions);
   bindAttribute(gl, program, 'aColor', colors);
@@ -174,6 +192,10 @@ function start() {
   const eye = gl.getUniformLocation(program, 'uEye');
   const specular = gl.getUniformLocation(program, 'uSpecular');
   const shininess = gl.getUniformLocation(program, 'uShininess');
+  const skyMode = gl.getUniformLocation(program, 'uSky');
+  const skyBand = gl.getUniformLocation(program, 'uSkyBand');
+  gl.uniform1i(gl.getUniformLocation(program, 'uStars'), 0);
+  gl.blendFuncSeparate(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA, gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
   const identity = new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
 
   function drawMesh(start, count, transform, material) {
@@ -202,6 +224,24 @@ function start() {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     gl.uniformMatrix4fv(projection, false, perspective(Math.PI / 4, aspect, 0.1, distance + 30));
     const viewMatrix = viewFromOrbit(camera.azimuth, camera.elevation, distance, 0);
+    if (sky.ready) {
+      // A esfera acompanha a posição da câmera, mas conserva a orientação do mundo.
+      const skyView = viewMatrix.slice();
+      skyView[14] = 0;
+      const canvasBottom = canvas.getBoundingClientRect().bottom;
+      gl.uniform2f(skyBand, (canvasBottom - controls.getBoundingClientRect().top) * pixelRatio,
+        (canvasBottom - header.getBoundingClientRect().bottom) * pixelRatio);
+      gl.uniformMatrix4fv(view, false, skyView);
+      gl.uniformMatrix4fv(model, false, identity);
+      gl.bindTexture(gl.TEXTURE_2D, sky.texture);
+      gl.uniform1i(skyMode, true);
+      gl.depthMask(false);
+      gl.enable(gl.BLEND);
+      gl.drawArrays(gl.TRIANGLES, nextVertex, skyPositions.length / 3);
+      gl.disable(gl.BLEND);
+      gl.depthMask(true);
+      gl.uniform1i(skyMode, false);
+    }
     gl.uniformMatrix4fv(view, false, viewMatrix);
     gl.uniform3f(eye, viewMatrix[2] * distance, viewMatrix[6] * distance, viewMatrix[10] * distance);
     gl.uniform1i(lightingEnabled, lighting);

@@ -19,20 +19,6 @@ main {
   background: url("paper.svg"), radial-gradient(ellipse at 50% 38%, #faf8f0, #eae6dc);
 }
 
-main::before {
-  content: "";
-  grid-area: 2 / 1;
-  z-index: -1;
-  pointer-events: none;
-  background: url("stars.svg") center;
-  mask-image: linear-gradient(
-    transparent,
-    black min(1.5rem, 20%),
-    black max(calc(100% - 1.5rem), 80%),
-    transparent
-  );
-}
-
 canvas {
   position: absolute;
   inset: 0;
