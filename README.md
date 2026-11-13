@@ -1,0 +1,49 @@
+# Asteroide B-612
+
+## A Cena
+
+Recriamos o asteroide do Pequeno Príncipe em WebGL, com a rosa, a raposa, três vulcões, um broto de baobá e um catavento. O chão lilás e o fundo com textura de papel vieram da ideia de fazer a cena parecer uma ilustração da capa do livro.
+
+[Abrir a cena](https://luccamolinari.github.io/tp2-cg/) · [Ver o repositório](https://github.com/luccamolinari/tp2-cg)
+
+| Controle | O que faz |
+| --- | --- |
+| `1` | Ativa a câmera que gira sozinha. |
+| `2` | Ativa a câmera que você gira arrastando a cena. |
+| Scroll | Aproxima ou afasta a câmera. |
+| `P` | Alterna entre o príncipe em pé, sentado numa pedra e deitado. |
+| `L` | Liga ou desliga a iluminação. |
+| Música de fundo | Liga ou desliga a trilha. |
+
+## Criadores
+
+- Lucca Molinari — [@luccamolinari](https://github.com/luccamolinari)
+- Nicolas — [@NicoDeVargas](https://github.com/NicoDeVargas)
+
+## Media kit
+
+![O Pequeno Príncipe em pé no asteroide, com a raposa, a rosa e os vulcões ao fundo](media/cena.png)
+
+## Opcionais
+
+> ⭐ Skybox, skyphere ou skydome: se considerarmos que nosso mundo está definido dentro de um cubo (skybox), podemos colocar uma imagem de textura em cada face interna (são 6) que represente o horizonte naquela direção. Veja exemplos de texturas de skyboxes e nossa aula sobre efeitos visuais. Repare que o cubo do skybox acompanha a posição, ou seja, não é possível se aproximar de uma parede, muito menos sair do cubo
+
+As estrelas são desenhadas numa esfera que acompanha a posição da câmera. Quando a câmera gira, muda a parte do céu que aparece na tela.
+
+> Poses alternativas: ao alternar as poses do personagem com P, além de mudar a posição e orientação, coloque-o de fato em outra pose (eg, sentado, deitado, dormindo)
+
+O príncipe muda de postura e de lugar no asteroide. Na pose sentada, ele se apoia numa pedra perto dos vulcões.
+
+> 🍔 Ciclo dia/noite: faça o tempo passar e que isso defina na forma como o cenário é renderizado. Isso pode ser feito configurando-se a fonte de luz direcional com cores diferentes, dependendo da hora do dia
+>
+> Se tiver um skybox, você deve alterá-lo para refletir os horários diferentes
+
+O ciclo dura 48 segundos. A cor da luz, o fundo e o brilho das estrelas mudam juntos.
+
+> 🌟 Música, efeitos sonoros e/ou som ambiente: inclua música de fundo, sons ambiente e efeitos sonoros (este último, caso haja algum tipo de interação)
+
+A trilha é um loop instrumental sintetizado no navegador. Ela começa quando você clica no botão de música.
+
+## Créditos
+
+A cena é inspirada em *O Pequeno Príncipe*, de Antoine de Saint-Exupéry. A capa serviu de referência para a paleta de cores e os desenhos do céu. Os modelos, as ilustrações e a música foram criados para o projeto.
