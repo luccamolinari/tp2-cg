@@ -10,6 +10,8 @@ body {
 }
 
 main {
+  --night: 0;
+  --secondary-ink: color-mix(in srgb, #54495d, #f1e8fa calc(var(--night) * 100%));
   position: relative;
   isolation: isolate;
   display: grid;
@@ -17,6 +19,17 @@ main {
   height: 100vh;
   height: 100dvh;
   background: url("paper.svg"), radial-gradient(ellipse at 50% 38%, #faf8f0, #eae6dc);
+  color: color-mix(in srgb, #383247, #fff6e7 calc(var(--night) * 100%));
+}
+
+main::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: url("paper.svg"), radial-gradient(ellipse at 50% 38%, #3b385d, #171831);
+  opacity: var(--night);
+  pointer-events: none;
 }
 
 canvas {
@@ -36,7 +49,7 @@ canvas {
   gap: 0.3rem;
   text-align: center;
   font-size: 0.8rem;
-  color: #54495d;
+  color: var(--secondary-ink);
   pointer-events: none;
 }
 
@@ -44,7 +57,7 @@ canvas {
   justify-self: center;
   pointer-events: auto;
   font: inherit;
-  color: inherit;
+  color: #54495d;
   background: #faf8f0;
   border: 1px solid #b8aabf;
   border-radius: 0.35rem;
@@ -66,7 +79,7 @@ header {
 
 header p {
   margin: 0 0 0.45rem;
-  color: #54495d;
+  color: var(--secondary-ink);
   font-size: 0.75rem;
   letter-spacing: 0.18em;
   text-transform: uppercase;

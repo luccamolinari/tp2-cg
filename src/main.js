@@ -36,6 +36,9 @@ const fragmentSource = `
   varying vec3 vPosition;
   uniform bool uLighting;
   uniform vec3 uLightDirection;
+  uniform vec3 uLightColor;
+  uniform vec3 uAmbientColor;
+  uniform float uDaylight;
   uniform vec3 uEye;
   uniform float uSpecular;
   uniform float uShininess;
@@ -50,7 +53,7 @@ const fragmentSource = `
       float latitude = 0.5 - asin(clamp(direction.y, -1.0, 1.0)) / 3.1415927;
       vec4 stars = texture2D(uStars, fract(vec2(longitude * 9.0, latitude * 5.0)));
       float edge = min(gl_FragCoord.y - uSkyBand.x, uSkyBand.y - gl_FragCoord.y);
-      gl_FragColor = vec4(stars.rgb, stars.a * smoothstep(0.0, 22.0, edge));
+      gl_FragColor = vec4(stars.rgb, stars.a * mix(1.0, 0.45, uDaylight) * smoothstep(0.0, 22.0, edge));
       return;
     }
     vec3 color = vColor;
@@ -64,7 +67,7 @@ const fragmentSource = `
         vec3 view = normalize(uEye - vPosition);
         specular = uSpecular * pow(max(dot(reflection, view), 0.0), uShininess);
       }
-      color = vColor * (0.54 + 0.5 * diffuse) + vec3(specular);
+      color = vColor * uAmbientColor + uLightColor * (vColor * diffuse + specular);
     }
     gl_FragColor = vec4(color, 1.0);
   }
@@ -136,6 +139,7 @@ function viewFromOrbit(azimuth, elevation, distance, targetY) {
 }
 
 function start() {
+  const scene = document.querySelector('main');
   bindMusic(document.querySelector('#music-toggle'));
   const canvas = document.querySelector('#scene');
   const gl = canvas.getContext('webgl', { antialias: true });
@@ -191,6 +195,9 @@ function start() {
   const model = gl.getUniformLocation(program, 'uModel');
   const lightingEnabled = gl.getUniformLocation(program, 'uLighting');
   const lightDirection = gl.getUniformLocation(program, 'uLightDirection');
+  const lightColor = gl.getUniformLocation(program, 'uLightColor');
+  const ambientColor = gl.getUniformLocation(program, 'uAmbientColor');
+  const daylightUniform = gl.getUniformLocation(program, 'uDaylight');
   const eye = gl.getUniformLocation(program, 'uEye');
   const specular = gl.getUniformLocation(program, 'uSpecular');
   const shininess = gl.getUniformLocation(program, 'uShininess');
@@ -208,7 +215,9 @@ function start() {
   }
 
   let previousTime = null;
+  let cycleStart = null;
   function draw(time) {
+    cycleStart ??= time;
     const elapsed = previousTime === null ? 0 : Math.min((time - previousTime) / 1000, 0.1);
     previousTime = time;
     if (camera.mode === 1) camera.azimuth += elapsed * 0.18;
@@ -221,6 +230,10 @@ function start() {
     }
     const aspect = canvas.width / canvas.height;
     const distance = camera.distance / Math.min(aspect, 1);
+    const phase = (time - cycleStart) / 48000 * 2 * Math.PI;
+    const daylight = (1 + Math.cos(phase)) / 2;
+    scene.style.setProperty('--night', 1 - daylight);
+    gl.uniform1f(daylightUniform, daylight);
 
     gl.viewport(0, 0, canvas.width, canvas.height);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -247,8 +260,10 @@ function start() {
     gl.uniformMatrix4fv(view, false, viewMatrix);
     gl.uniform3f(eye, viewMatrix[2] * distance, viewMatrix[6] * distance, viewMatrix[10] * distance);
     gl.uniform1i(lightingEnabled, lighting);
-    const sunAngle = time * 0.00015 + 0.8;
-    gl.uniform3f(lightDirection, Math.sin(sunAngle), 1.3, Math.cos(sunAngle));
+    const sunAngle = phase + 0.8;
+    gl.uniform3f(lightDirection, Math.sin(sunAngle), 0.25 + daylight * 1.05, Math.cos(sunAngle));
+    gl.uniform3f(lightColor, 0.07 + daylight * 0.43, 0.10 + daylight * 0.38, 0.20 + daylight * 0.25);
+    gl.uniform3f(ambientColor, 0.30 + daylight * 0.24, 0.34 + daylight * 0.20, 0.49 + daylight * 0.05);
     drawMesh(0, sceneryCount, identity, materials.stone);
     drawMesh(poseStarts[currentPose], princePoses[currentPose].positions.length / 3, identity, materials.cloth);
     const transforms = pinwheelTransforms(time / 1000);
