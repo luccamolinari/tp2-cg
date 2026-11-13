@@ -14,7 +14,7 @@ Recriamos o asteroide do Pequeno Príncipe em WebGL, com a rosa, a raposa, três
 | `P` | Alterna entre o príncipe em pé, sentado numa pedra e deitado. |
 | `L` | Liga ou desliga a iluminação. |
 | `T` | Alterna a velocidade do ciclo dia/noite entre 1× e 4×. |
-| Música de fundo | Liga ou desliga a trilha. |
+| `M` ou botão de música | Liga ou desliga a trilha. |
 
 ## Criadores
 
@@ -43,7 +43,7 @@ O ciclo dura 48 segundos na velocidade normal e 12 segundos na velocidade 4×. A
 
 > 🌟 Música, efeitos sonoros e/ou som ambiente: inclua música de fundo, sons ambiente e efeitos sonoros (este último, caso haja algum tipo de interação)
 
-A trilha é um loop instrumental sintetizado no navegador. Ela começa quando você clica no botão de música.
+A trilha é um loop instrumental sintetizado no navegador. Ela começa ao apertar `M` ou clicar no botão de música.
 
 ## Créditos
 

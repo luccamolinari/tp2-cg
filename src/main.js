@@ -140,7 +140,8 @@ function viewFromOrbit(azimuth, elevation, distance, targetY) {
 
 function start() {
   const scene = document.querySelector('main');
-  bindMusic(document.querySelector('#music-toggle'));
+  const musicButton = document.querySelector('#music-toggle');
+  bindMusic(musicButton);
   const canvas = document.querySelector('#scene');
   const gl = canvas.getContext('webgl', { antialias: true });
   if (!gl) {
@@ -174,8 +175,9 @@ function start() {
     }
     if (key === 't') {
       timeSpeed = timeSpeed === 1 ? 4 : 1;
-      timeStatus.textContent = `T · Tempo ${timeSpeed}×`;
+      timeStatus.textContent = timeSpeed === 1 ? 'T · Acelerar (1×)' : 'T · Voltar ao normal (4×)';
     }
+    if (key === 'm' && !musicButton.hidden) musicButton.click();
     if (key === 'l') {
       lighting = !lighting;
       lightStatus.textContent = lighting ? 'L · Luz ligada' : 'L · Luz desligada';
