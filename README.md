@@ -13,6 +13,7 @@ Recriamos o asteroide do Pequeno Príncipe em WebGL, com a rosa, a raposa, três
 | Scroll | Aproxima ou afasta a câmera. |
 | `P` | Alterna entre o príncipe em pé, sentado numa pedra e deitado. |
 | `L` | Liga ou desliga a iluminação. |
+| `T` | Alterna a velocidade do ciclo dia/noite entre 1× e 4×. |
 | Música de fundo | Liga ou desliga a trilha. |
 
 ## Criadores
@@ -38,7 +39,7 @@ O príncipe muda de postura e de lugar no asteroide. Na pose sentada, ele se apo
 >
 > Se tiver um skybox, você deve alterá-lo para refletir os horários diferentes
 
-O ciclo dura 48 segundos. A cor da luz, o fundo e o brilho das estrelas mudam juntos.
+O ciclo dura 48 segundos na velocidade normal e 12 segundos na velocidade 4×. A cor da luz, o fundo e o brilho das estrelas mudam juntos.
 
 > 🌟 Música, efeitos sonoros e/ou som ambiente: inclua música de fundo, sons ambiente e efeitos sonoros (este último, caso haja algum tipo de interação)
 

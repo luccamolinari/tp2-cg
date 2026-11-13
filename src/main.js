@@ -164,11 +164,17 @@ function start() {
   let currentPose = 0;
   let lighting = true;
   const lightStatus = document.querySelector('#light-mode');
+  const timeStatus = document.querySelector('#time-mode');
+  let timeSpeed = 1;
   window.addEventListener('keydown', event => {
     if (event.repeat || event.ctrlKey || event.altKey || event.metaKey) return;
     const key = event.key.toLowerCase();
     if (key === 'p') {
       currentPose = (currentPose + 1) % princePoses.length;
+    }
+    if (key === 't') {
+      timeSpeed = timeSpeed === 1 ? 4 : 1;
+      timeStatus.textContent = `T · Tempo ${timeSpeed}×`;
     }
     if (key === 'l') {
       lighting = !lighting;
@@ -215,10 +221,10 @@ function start() {
   }
 
   let previousTime = null;
-  let cycleStart = null;
+  let cycleSeconds = 0;
   function draw(time) {
-    cycleStart ??= time;
-    const elapsed = previousTime === null ? 0 : Math.min((time - previousTime) / 1000, 0.1);
+    const frameSeconds = previousTime === null ? 0 : (time - previousTime) / 1000;
+    const elapsed = Math.min(frameSeconds, 0.1);
     previousTime = time;
     if (camera.mode === 1) camera.azimuth += elapsed * 0.18;
     const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
@@ -230,7 +236,8 @@ function start() {
     }
     const aspect = canvas.width / canvas.height;
     const distance = camera.distance / Math.min(aspect, 1);
-    const phase = (time - cycleStart) / 48000 * 2 * Math.PI;
+    cycleSeconds = (cycleSeconds + frameSeconds * timeSpeed) % 48;
+    const phase = cycleSeconds / 48 * 2 * Math.PI;
     const daylight = (1 + Math.cos(phase)) / 2;
     scene.style.setProperty('--night', 1 - daylight);
     gl.uniform1f(daylightUniform, daylight);
