@@ -5,6 +5,7 @@ import { createPrince } from './prince.js';
 import { createFox } from './fox.js';
 import { createCamera } from './camera.js';
 import { faceNormals } from './normals.js';
+import { bindMusic } from './music.js';
 import { createSkySphere, loadSkyTexture } from './sky.js';
 
 const vertexSource = `
@@ -135,6 +136,7 @@ function viewFromOrbit(azimuth, elevation, distance, targetY) {
 }
 
 function start() {
+  bindMusic(document.querySelector('#music-toggle'));
   const canvas = document.querySelector('#scene');
   const gl = canvas.getContext('webgl', { antialias: true });
   if (!gl) {

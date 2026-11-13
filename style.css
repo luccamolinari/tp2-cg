@@ -40,6 +40,23 @@ canvas {
   pointer-events: none;
 }
 
+.controls button {
+  justify-self: center;
+  pointer-events: auto;
+  font: inherit;
+  color: inherit;
+  background: #faf8f0;
+  border: 1px solid #b8aabf;
+  border-radius: 0.35rem;
+  padding: 0.3rem 0.65rem;
+  cursor: pointer;
+}
+
+.controls button[aria-pressed="true"] {
+  background: #e1d6eb;
+  border-color: #776486;
+}
+
 header {
   grid-area: 1 / 1;
   position: relative;
