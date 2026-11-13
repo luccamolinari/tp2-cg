@@ -1,5 +1,9 @@
 # Asteroide B-612
 
+Um avião cai no Saara. Em 1935, Antoine de Saint-Exupéry viveu essa cena ao lado de seu mecânico e sobreviveu. Anos depois, em *O Pequeno Príncipe*, outro aviador fica sozinho no deserto, tentando consertar o avião. É ali que aparece um menino de outro planeta, pedindo que ele desenhe um carneiro. [A vida do aviador e o manuscrito do livro](https://madparis.fr/A-la-rencontre-du-petit-prince-2120)
+
+No livro, é no deserto que a gente ouve falar do B-612 pela primeira vez. No nosso trabalho, dá pra ir até lá, dar uma volta e ficar um pouco com o príncipe, a rosa e a raposa.
+
 ## A Cena
 
 Recriamos o asteroide do Pequeno Príncipe em WebGL, com a rosa, a raposa, três vulcões, um broto de baobá e um catavento. O chão lilás e o fundo com textura de papel vieram da ideia de fazer a cena parecer uma ilustração da capa do livro.
