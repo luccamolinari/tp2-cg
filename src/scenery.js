@@ -3,6 +3,7 @@ import { princeSeat } from './prince.js';
 export function createScenery() {
   const positions = [];
   const colors = [];
+  const vents = [];
 
   function triangle(a, b, c, color) {
     positions.push(...a, ...b, ...c);
@@ -33,6 +34,7 @@ export function createScenery() {
     lathe(x, z, profile.map(([r, y]) => [r * size, y * size]), [0.48, 0.43, 0.46]);
     if (active) {
       lathe(x, z, [[0, 0.49 * size], [0.12 * size, 0.49 * size]], [1, 0.34, 0.12]);
+      vents.push([x, 0.67 * size, z]);
     }
   }
 
@@ -62,5 +64,5 @@ export function createScenery() {
     lathe(x, z, [[0, y - 0.1], [0.24, y], [0.2, y + 0.17], [0, y + 0.28]], [0.38, 0.57, 0.29], 7);
   }
 
-  return { positions: new Float32Array(positions), colors: new Float32Array(colors) };
+  return { positions: new Float32Array(positions), colors: new Float32Array(colors), vents };
 }

@@ -7,21 +7,30 @@ import { createCamera } from './camera.js';
 import { faceNormals } from './normals.js';
 import { bindMusic } from './music.js';
 import { createSkySphere, loadSkyTexture } from './sky.js';
+import { createSmoke } from './smoke.js';
 
 const vertexSource = `
   attribute vec3 aPosition;
   attribute vec3 aColor;
   attribute vec3 aNormal;
+  attribute float aAge;
   uniform mat4 uView;
   uniform mat4 uProjection;
   uniform mat4 uModel;
+  uniform bool uSmoke;
+  uniform float uPointScale;
   varying vec3 vColor;
   varying vec3 vNormal;
   varying vec3 vPosition;
+  varying float vAge;
 
   void main() {
     vec4 world = uModel * vec4(aPosition, 1.0);
     gl_Position = uProjection * uView * world;
+    if (uSmoke) {
+      gl_PointSize = clamp(uPointScale * (0.10 + 0.40 * aAge) / max(gl_Position.w, 0.1), 1.0, 96.0);
+      vAge = aAge;
+    }
     vColor = aColor;
     // Os modelos usam apenas translação e rotação.
     vNormal = (uModel * vec4(aNormal, 0.0)).xyz;
@@ -34,6 +43,8 @@ const fragmentSource = `
   varying vec3 vColor;
   varying vec3 vNormal;
   varying vec3 vPosition;
+  varying float vAge;
+  uniform bool uSmoke;
   uniform bool uLighting;
   uniform vec3 uLightDirection;
   uniform vec3 uLightColor;
@@ -47,6 +58,14 @@ const fragmentSource = `
   uniform vec2 uSkyBand;
 
   void main() {
+    if (uSmoke) {
+      float radius = length(gl_PointCoord - vec2(0.5));
+      float opacity = (1.0 - smoothstep(0.12, 0.5, radius)) * (1.0 - vAge);
+      opacity *= smoothstep(0.0, 0.1, vAge) * 0.48;
+      vec3 smoke = mix(vec3(0.66, 0.66, 0.76), vec3(0.49, 0.44, 0.53), uDaylight);
+      gl_FragColor = vec4(smoke, opacity);
+      return;
+    }
     if (uSky) {
       vec3 direction = normalize(vPosition);
       float longitude = atan(direction.z, direction.x) / 6.2831853 + 0.5;
@@ -107,10 +126,12 @@ function createProgram(gl) {
 
 function bindAttribute(gl, program, name, data) {
   const location = gl.getAttribLocation(program, name);
-  gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
+  const buffer = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
   gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
   gl.vertexAttribPointer(location, 3, gl.FLOAT, false, 0, 0);
   gl.enableVertexAttribArray(location);
+  return buffer;
 }
 
 function perspective(fov, aspect, near, far) {
@@ -192,7 +213,7 @@ function start() {
   const header = document.querySelector('header');
   const controls = document.querySelector('.controls');
   gl.useProgram(program);
-  bindAttribute(gl, program, 'aPosition', positions);
+  const positionBuffer = bindAttribute(gl, program, 'aPosition', positions);
   bindAttribute(gl, program, 'aColor', colors);
   bindAttribute(gl, program, 'aNormal', faceNormals(positions));
   gl.enable(gl.DEPTH_TEST);
@@ -211,6 +232,12 @@ function start() {
   const shininess = gl.getUniformLocation(program, 'uShininess');
   const skyMode = gl.getUniformLocation(program, 'uSky');
   const skyBand = gl.getUniformLocation(program, 'uSkyBand');
+  const smoke = createSmoke(scenery.vents);
+  const smokeBuffer = gl.createBuffer();
+  const positionAttribute = gl.getAttribLocation(program, 'aPosition');
+  const ageAttribute = gl.getAttribLocation(program, 'aAge');
+  const smokeMode = gl.getUniformLocation(program, 'uSmoke');
+  const pointScale = gl.getUniformLocation(program, 'uPointScale');
   gl.uniform1i(gl.getUniformLocation(program, 'uStars'), 0);
   gl.blendFuncSeparate(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA, gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
   const identity = new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
@@ -278,6 +305,24 @@ function start() {
     const transforms = pinwheelTransforms(time / 1000);
     drawMesh(sceneryCount, pinwheel.poleCount, transforms.pole, materials.wood);
     drawMesh(sceneryCount + pinwheel.poleCount, pinwheel.bladeCount, transforms.blades, materials.paper);
+
+    gl.uniformMatrix4fv(model, false, identity);
+    gl.uniform1i(smokeMode, true);
+    gl.uniform1f(pointScale, canvas.height / (2 * Math.tan(Math.PI / 8)));
+    gl.bindBuffer(gl.ARRAY_BUFFER, smokeBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, smoke.update(time / 1000), gl.DYNAMIC_DRAW);
+    gl.vertexAttribPointer(positionAttribute, 3, gl.FLOAT, false, 16, 0);
+    gl.vertexAttribPointer(ageAttribute, 1, gl.FLOAT, false, 16, 12);
+    gl.enableVertexAttribArray(ageAttribute);
+    gl.enable(gl.BLEND);
+    gl.depthMask(false);
+    gl.drawArrays(gl.POINTS, 0, smoke.particles.length / 4);
+    gl.depthMask(true);
+    gl.disable(gl.BLEND);
+    gl.disableVertexAttribArray(ageAttribute);
+    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+    gl.vertexAttribPointer(positionAttribute, 3, gl.FLOAT, false, 0, 0);
+    gl.uniform1i(smokeMode, false);
     requestAnimationFrame(draw);
   }
 

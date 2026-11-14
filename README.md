@@ -39,6 +39,10 @@ As estrelas são desenhadas numa esfera que acompanha a posição da câmera. Qu
 
 O príncipe muda de postura e de lugar no asteroide. Na pose sentada, ele se apoia numa pedra perto dos vulcões.
 
+> 🍔 Efeitos de partículas: para simular fenômenos como fogo, fumaça, água etc. Falaremos disso na aula de efeitos visuais
+
+Os dois vulcões ativos soltam fumaça. As partículas sobem, se espalham e desaparecem aos poucos.
+
 > 🍔 Ciclo dia/noite: faça o tempo passar e que isso defina na forma como o cenário é renderizado. Isso pode ser feito configurando-se a fonte de luz direcional com cores diferentes, dependendo da hora do dia
 >
 > Se tiver um skybox, você deve alterá-lo para refletir os horários diferentes
