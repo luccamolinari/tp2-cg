@@ -17,7 +17,7 @@ Recriamos o asteroide do Pequeno Príncipe em WebGL, com a rosa, a raposa, três
 | Scroll | Aproxima ou afasta a câmera. |
 | `P` ou botão Mudar pose | Alterna entre o príncipe em pé, sentado numa pedra e deitado. |
 | `L` | Liga ou desliga a iluminação. |
-| `T` ou botão Acelerar | Alterna a velocidade do ciclo dia/noite entre 1× e 4×. |
+| Botão Manhã / Noite | Troca o período da cena com uma transição suave na luz, no fundo e nas estrelas. |
 | `M` ou botão de música | Liga ou desliga a trilha. |
 
 ## Criadores
@@ -42,12 +42,6 @@ O príncipe muda de postura e de lugar no asteroide. Na pose sentada, ele se apo
 > 🍔 Efeitos de partículas: para simular fenômenos como fogo, fumaça, água etc. Falaremos disso na aula de efeitos visuais
 
 Os dois vulcões ativos soltam fumaça. As partículas sobem, se espalham e desaparecem aos poucos.
-
-> 🍔 Ciclo dia/noite: faça o tempo passar e que isso defina na forma como o cenário é renderizado. Isso pode ser feito configurando-se a fonte de luz direcional com cores diferentes, dependendo da hora do dia
->
-> Se tiver um skybox, você deve alterá-lo para refletir os horários diferentes
-
-O ciclo dura 48 segundos na velocidade normal e 12 segundos na velocidade 4×. A cor da luz, o fundo e o brilho das estrelas mudam juntos.
 
 > 🌟 Música, efeitos sonoros e/ou som ambiente: inclua música de fundo, sons ambiente e efeitos sonoros (este último, caso haja algum tipo de interação)
 

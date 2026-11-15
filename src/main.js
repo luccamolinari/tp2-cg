@@ -187,20 +187,20 @@ function start() {
   let lighting = true;
   const lightStatus = document.querySelector('#light-mode');
   const poseButton = document.querySelector('#pose-button');
-  const timeButton = document.querySelector('#time-mode');
-  let timeSpeed = 1;
+  const periodButton = document.querySelector('#period-toggle');
+  let nightSelected = false;
+  let nightProgress = 0;
   poseButton.addEventListener('click', () => {
     currentPose = (currentPose + 1) % princePoses.length;
   });
-  timeButton.addEventListener('click', () => {
-    timeSpeed = timeSpeed === 1 ? 4 : 1;
-    timeButton.textContent = timeSpeed === 1 ? 'T · Acelerar (1×)' : 'T · Voltar ao normal (4×)';
+  periodButton.addEventListener('click', () => {
+    nightSelected = !nightSelected;
+    periodButton.textContent = nightSelected ? 'Noite · Mudar para manhã' : 'Manhã · Mudar para noite';
   });
   window.addEventListener('keydown', event => {
     if (event.repeat || event.ctrlKey || event.altKey || event.metaKey) return;
     const key = event.key.toLowerCase();
     if (key === 'p') poseButton.click();
-    if (key === 't') timeButton.click();
     if (key === 'm' && !musicButton.hidden) musicButton.click();
     if (key === 'l') {
       lighting = !lighting;
@@ -253,7 +253,6 @@ function start() {
   }
 
   let previousTime = null;
-  let cycleSeconds = 0;
   function draw(time) {
     const frameSeconds = previousTime === null ? 0 : (time - previousTime) / 1000;
     const elapsed = Math.min(frameSeconds, 0.1);
@@ -268,10 +267,14 @@ function start() {
     }
     const aspect = canvas.width / canvas.height;
     const distance = camera.distance / Math.min(aspect, 1);
-    cycleSeconds = (cycleSeconds + frameSeconds * timeSpeed) % 48;
-    const phase = cycleSeconds / 48 * 2 * Math.PI;
-    const daylight = (1 + Math.cos(phase)) / 2;
-    scene.style.setProperty('--night', 1 - daylight);
+    const step = elapsed / 1.5;
+    const nextProgress = nightSelected ? Math.min(1, nightProgress + step) : Math.max(0, nightProgress - step);
+    const night = nextProgress * nextProgress * (3 - 2 * nextProgress);
+    if (nextProgress !== nightProgress) {
+      nightProgress = nextProgress;
+      scene.style.setProperty('--night', night);
+    }
+    const daylight = 1 - night;
     gl.uniform1f(daylightUniform, daylight);
 
     gl.viewport(0, 0, canvas.width, canvas.height);
@@ -299,7 +302,7 @@ function start() {
     gl.uniformMatrix4fv(view, false, viewMatrix);
     gl.uniform3f(eye, viewMatrix[2] * distance, viewMatrix[6] * distance, viewMatrix[10] * distance);
     gl.uniform1i(lightingEnabled, lighting);
-    const sunAngle = phase + 0.8;
+    const sunAngle = 0.8 + (1 - daylight) * Math.PI;
     gl.uniform3f(lightDirection, Math.sin(sunAngle), 0.25 + daylight * 1.05, Math.cos(sunAngle));
     gl.uniform3f(lightColor, 0.07 + daylight * 0.43, 0.10 + daylight * 0.38, 0.20 + daylight * 0.25);
     gl.uniform3f(ambientColor, 0.30 + daylight * 0.24, 0.34 + daylight * 0.20, 0.49 + daylight * 0.05);
