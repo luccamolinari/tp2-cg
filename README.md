@@ -31,7 +31,7 @@ Recriamos o asteroide do Pequeno Príncipe em WebGL, com a rosa, a raposa, três
 
 ## Opcionais
 
-> ⭐ Skybox, skyphere ou skydome: se considerarmos que nosso mundo está definido dentro de um cubo (skybox), podemos colocar uma imagem de textura em cada face interna (são 6) que represente o horizonte naquela direção. Veja exemplos de texturas de skyboxes e nossa aula sobre efeitos visuais. Repare que o cubo do skybox acompanha a posição, ou seja, não é possível se aproximar de uma parede, muito menos sair do cubo
+> Skybox, skyphere ou skydome: se considerarmos que nosso mundo está definido dentro de um cubo (skybox), podemos colocar uma imagem de textura em cada face interna (são 6) que represente o horizonte naquela direção. Veja exemplos de texturas de skyboxes e nossa aula sobre efeitos visuais. Repare que o cubo do skybox acompanha a posição, ou seja, não é possível se aproximar de uma parede, muito menos sair do cubo
 
 As estrelas são desenhadas numa esfera que acompanha a posição da câmera. Quando a câmera gira, muda a parte do céu que aparece na tela.
 
@@ -39,11 +39,11 @@ As estrelas são desenhadas numa esfera que acompanha a posição da câmera. Qu
 
 O príncipe muda de postura e de lugar no asteroide. Na pose sentada, ele se apoia numa pedra perto dos vulcões.
 
-> 🍔 Efeitos de partículas: para simular fenômenos como fogo, fumaça, água etc. Falaremos disso na aula de efeitos visuais
+> Efeitos de partículas: para simular fenômenos como fogo, fumaça, água etc. Falaremos disso na aula de efeitos visuais
 
 Os dois vulcões ativos soltam fumaça. As partículas sobem, se espalham e desaparecem aos poucos.
 
-> 🌟 Música, efeitos sonoros e/ou som ambiente: inclua música de fundo, sons ambiente e efeitos sonoros (este último, caso haja algum tipo de interação)
+> Música, efeitos sonoros e/ou som ambiente: inclua música de fundo, sons ambiente e efeitos sonoros (este último, caso haja algum tipo de interação)
 
 A trilha é um loop instrumental sintetizado no navegador. Ela começa ao apertar `M` ou clicar no botão de música.
 
