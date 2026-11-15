@@ -53,15 +53,21 @@ canvas {
   pointer-events: none;
 }
 
+.control-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.35rem;
+}
+
 .controls button {
-  justify-self: center;
   pointer-events: auto;
   font: inherit;
   color: #54495d;
   background: #faf8f0;
   border: 1px solid #b8aabf;
   border-radius: 0.35rem;
-  padding: 0.3rem 0.65rem;
+  padding: 0.5rem 0.65rem;
   cursor: pointer;
 }
 

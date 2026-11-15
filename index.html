@@ -4,8 +4,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Asteroide B-612</title>
-    <link rel="stylesheet" href="style.css?v=5">
-    <script src="src/main.js?v=8" type="module"></script>
+    <link rel="stylesheet" href="style.css?v=6">
+    <script src="src/main.js?v=9" type="module"></script>
   </head>
   <body>
     <main>
@@ -13,12 +13,15 @@
       <header>
         <p>O Pequeno Príncipe</p>
         <h1>Asteroide B-612</h1>
-        <p>Pressione P para mudar a pose do príncipe</p>
       </header>
       <aside class="controls">
         <span id="camera-mode" role="status">Câmera automática</span>
-        <span>1 · Automática &nbsp; 2 · Orbital &nbsp; Scroll · Zoom &nbsp; <span id="light-mode" role="status">L · Luz ligada</span> &nbsp; <span id="time-mode" role="status">T · Acelerar (1×)</span></span>
-        <button type="button" id="music-toggle" aria-pressed="false" aria-keyshortcuts="M">M · Música de fundo</button>
+        <span>1 · Automática &nbsp; 2 · Orbital &nbsp; Scroll · Zoom &nbsp; <span id="light-mode" role="status">L · Luz ligada</span></span>
+        <div class="control-buttons">
+          <button type="button" id="pose-button" aria-keyshortcuts="P">P · Mudar pose</button>
+          <button type="button" id="time-mode" aria-keyshortcuts="T">T · Acelerar (1×)</button>
+          <button type="button" id="music-toggle" aria-pressed="false" aria-keyshortcuts="M">M · Música de fundo</button>
+        </div>
       </aside>
       <p id="status" role="status" hidden></p>
     </main>

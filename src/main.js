@@ -186,18 +186,21 @@ function start() {
   let currentPose = 0;
   let lighting = true;
   const lightStatus = document.querySelector('#light-mode');
-  const timeStatus = document.querySelector('#time-mode');
+  const poseButton = document.querySelector('#pose-button');
+  const timeButton = document.querySelector('#time-mode');
   let timeSpeed = 1;
+  poseButton.addEventListener('click', () => {
+    currentPose = (currentPose + 1) % princePoses.length;
+  });
+  timeButton.addEventListener('click', () => {
+    timeSpeed = timeSpeed === 1 ? 4 : 1;
+    timeButton.textContent = timeSpeed === 1 ? 'T · Acelerar (1×)' : 'T · Voltar ao normal (4×)';
+  });
   window.addEventListener('keydown', event => {
     if (event.repeat || event.ctrlKey || event.altKey || event.metaKey) return;
     const key = event.key.toLowerCase();
-    if (key === 'p') {
-      currentPose = (currentPose + 1) % princePoses.length;
-    }
-    if (key === 't') {
-      timeSpeed = timeSpeed === 1 ? 4 : 1;
-      timeStatus.textContent = timeSpeed === 1 ? 'T · Acelerar (1×)' : 'T · Voltar ao normal (4×)';
-    }
+    if (key === 'p') poseButton.click();
+    if (key === 't') timeButton.click();
     if (key === 'm' && !musicButton.hidden) musicButton.click();
     if (key === 'l') {
       lighting = !lighting;

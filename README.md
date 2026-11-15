@@ -15,9 +15,9 @@ Recriamos o asteroide do Pequeno Príncipe em WebGL, com a rosa, a raposa, três
 | `1` | Ativa a câmera que gira sozinha. |
 | `2` | Ativa a câmera que você gira arrastando a cena. |
 | Scroll | Aproxima ou afasta a câmera. |
-| `P` | Alterna entre o príncipe em pé, sentado numa pedra e deitado. |
+| `P` ou botão Mudar pose | Alterna entre o príncipe em pé, sentado numa pedra e deitado. |
 | `L` | Liga ou desliga a iluminação. |
-| `T` | Alterna a velocidade do ciclo dia/noite entre 1× e 4×. |
+| `T` ou botão Acelerar | Alterna a velocidade do ciclo dia/noite entre 1× e 4×. |
 | `M` ou botão de música | Liga ou desliga a trilha. |
 
 ## Criadores
