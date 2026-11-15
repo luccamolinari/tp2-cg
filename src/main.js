@@ -195,12 +195,13 @@ function start() {
   });
   periodButton.addEventListener('click', () => {
     nightSelected = !nightSelected;
-    periodButton.textContent = nightSelected ? 'Noite · Mudar para manhã' : 'Manhã · Mudar para noite';
+    periodButton.textContent = nightSelected ? 'T · Mudar para manhã' : 'T · Mudar para noite';
   });
   window.addEventListener('keydown', event => {
     if (event.repeat || event.ctrlKey || event.altKey || event.metaKey) return;
     const key = event.key.toLowerCase();
     if (key === 'p') poseButton.click();
+    if (key === 't') periodButton.click();
     if (key === 'm' && !musicButton.hidden) musicButton.click();
     if (key === 'l') {
       lighting = !lighting;
